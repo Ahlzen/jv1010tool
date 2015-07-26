@@ -54,6 +54,7 @@ function midiAvailable() {
 	return ! (midi == null);
 }
 
+
 function getMidiInNames() {
 	return getNames(midi.inputs);
 }
@@ -71,6 +72,21 @@ function getNames(ports) {
 }
 
 
+function getMidiInPort(portName) {
+	return getMidiPort(midi.inputs, portName);
+}
+
+function getMidiOutPort(portName) {
+	return getMidiPort(midi.outputs, portName);
+}
+
+function getMidiPort(ports, portName) {
+	var p = null;
+	ports.forEach(function(port) {
+		if (port.name == portName) { p = port; }
+	});
+	return p;
+}
 
 // // obsolete
 // function midiAvailable() {
