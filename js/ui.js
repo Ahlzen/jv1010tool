@@ -44,13 +44,26 @@ function initializeUI() {
 	$('#patchList').accordion({
       heightStyle: "fill"
     });
-	$('#patchListUser').attr('size', UserPatches.length);
-	for (var i = 0; i < UserPatches.length; i++) {
-		var patch = UserPatches[i];
-		addOption('#patchListUser', i, patch.number + " " + patch.name );
-	};
+    initializePatchList($('#patchListUser'), "User");
 }
 
+
+function initializePatchList(element, bankName) {
+	var bank = Banks[bankName];
+	var patchList = bank.patches;
+	element.attr('size', patchList.length);
+	for (var i = 0; i < patchList.length; i++) {
+		var patch = patchList[i];
+		element.append($('<option>', {value: i, text: patch.number + ' ' + patch.name}));
+	};
+	element.change(function(){
+		program = element.val();
+		bankMsb = bank.msb;
+		bankLsb = bank.lsb;
+		console.log("Bank " + bankMsb + " " + bankLsb + ", Program " + program);
+		midiProgramBankChange(program, bankMsb, bankLsb);
+	});
+}
 
 
 // UI utils

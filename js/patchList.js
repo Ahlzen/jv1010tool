@@ -1,15 +1,7 @@
 // JV-1010 default patch list
 // http://www.levente-zone.co.uk/Synths/JV1010_Ref_Manual/patch_list.htm
 
-var Banks = {
-	"User": UserPatches,
-	"Preset A": PresetAPatches,
-	"Preset B": PresetBPatches,
-	"Preset C": PresetCPatches,
-	"Preset D (GM)": PresetDPatches,
-	"Preset E": PresetEPatches,
-	"Session": SessionPatches
-}
+
 
 var UserPatches = [
 	{number: '001', name: 'Tremendously', voices: 4, poly: true},
@@ -1054,3 +1046,13 @@ var SessionPatches = [
 	{number: '254', name: 'DEMO Buzzzzz', voices: 2},
 	{number: '255', name: 'DEMO Crowd', voices: 4}
 ];
+
+var Banks = {
+	"User":          {msb: 80, lsb: 0, patches: UserPatches},
+	"Preset A":      {msb: 81, lsb: 0, patches: PresetAPatches},
+	"Preset B":      {msb: 81, lsb: 1, patches: PresetBPatches},
+	"Preset C":      {msb: 81, lsb: 2, patches: PresetCPatches},
+	"Preset D (GM)": {msb: 81, lsb: 3, patches: PresetDPatches},
+	"Preset E":      {msb: 81, lsb: 4, patches: PresetEPatches},
+	"Session":       {msb: 84, lsb: 0, patches: SessionPatches}
+};
