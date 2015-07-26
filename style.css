@@ -4,7 +4,13 @@ body {
 	font-family: sans-serif;
 	margin: 0;
 	padding: 0;
+	font-size: 12pt;
 }
+
+/*select {
+	height: 10px;
+	font-size: 12pt;
+}*/
 
 h1 { font-size: 18pt; font-weight: bold; margin: 5px; display: inline; }
 
@@ -27,7 +33,7 @@ h1 { font-size: 18pt; font-weight: bold; margin: 5px; display: inline; }
 	right: 2%;
 }
 
-#patchList {
+#patchPanel {
 	left: 2%;
 	right: 71%;
 	top: 80px;
@@ -48,6 +54,26 @@ h1 { font-size: 18pt; font-weight: bold; margin: 5px; display: inline; }
 #midiOut {
 	width: 20%;
 }
+
+
+/* PatchPanel controls */
+
+#patchPanel #patchListButtons {
+	position: absolute;
+	height: 20px;
+	width: 100%;
+	left: 0;
+	top: 0;
+}
+
+#patchPanel #patchList {
+	position: absolute;
+	width: 100%;
+	top: 30px;
+	left: 0;
+	bottom: 0;
+}
+
 
 
 

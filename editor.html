@@ -5,17 +5,19 @@
 <meta charset="UTF-8">
 <title>JV-1010 Editor</title>
 <link rel="stylesheet" type="text/css" href="style.css">
+<!-- <link rel="stylesheet" type="text/css" href="js/jquery-ui-1.11.4/themes/ui-darkness/jquery-ui.min.css"> -->
 <link rel="stylesheet" type="text/css" href="js/jquery-ui-1.11.4/jquery-ui.min.css">
-<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-<script src="js/jquery-ui-1.11.4/jquery-ui.min.js"></script>
-<script src="js/WebMIDIAPIShim/WebMIDIAPI.js"></script>
-<script src="js/util.js"></script>
-<script src="js/midi.js"></script>
-<script src="js/logic.js"></script>
-<script src="js/ui.js"></script>
-<script type="text/javascript">
-$(document).ready(function() { initialize(); });
-</script>
+	<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+	<script src="js/jquery-ui-1.11.4/jquery-ui.min.js"></script>
+	<script src="js/WebMIDIAPIShim/WebMIDIAPI.js"></script>
+	<script src="js/util.js"></script>
+	<script src="js/midi.js"></script>
+	<script src="js/patchList.js"></script>
+	<script src="js/logic.js"></script>
+	<script src="js/ui.js"></script>
+	<script type="text/javascript">
+		$(document).ready(initializeApp);
+	</script>
 </head>
 
 <body>
@@ -33,12 +35,34 @@ $(document).ready(function() { initialize(); });
     </select>
 </div>
 
-<div id="patchList" class="panel">
-Patch List
+<div id="patchPanel" class="panel">
+
+	<div id="patchListButtons">
+		<a id="expandAllPatches">Expand All</a>
+		<a id="collapseAllPatches">Collapse All</a>
+	</div>
+
+	<div id="patchList">
+		<h3>User</h3>
+		<div>
+			<select id="patchListUser">
+			</select>
+			<br/>
+		</div>
+
+
+		<h3>Preset A</h3>
+		<div>
+			<select id="patchListPresetA">
+			</select>
+			<br/>
+		</div>
+	</div>
+
 </div>
 
 <div id="main" class="panel">
-Editor window
+&nbsp;
 </div>
 
 </form>
