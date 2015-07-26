@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+<title>JV-1010 Editor</title>
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script src="js/jquery-ui-1.11.4/jquery-ui.min.js"></script>
+<script src="js/WebMIDIAPIShim/WebMIDIAPI.js"></script>
+<script src="js/util.js"></script>
+<script src="js/midi.js"></script>
+<script src="js/jv1010editor.js"></script>
+<link rel="stylesheet" type="text/css" href="style.css">
+<link rel="stylesheet" type="text/css" href="js/jquery-ui-1.11.4/jquery-ui.min.css">
+<script type="text/javascript">
+
+
+$(document).ready(function(){
+	initializeMidi(onMidiAvailable, onNoMidi);
+})
+
+
+function onMidiAvailable(){
+	// Add available MIDI in and out ports
+	midi.inputs.forEach(function(p){
+		console.log("Adding IN: " + p.name);
+	});
+	midi.outputs.forEach(function(p){
+		console.log("Adding OUT: " + p.name);
+	});
+}
+
+function onNoMidi() {
+	// TODO: Add error message
+	console.log("WebMIDI not supported.");
+}
+
+// function listDevices() {
+// 	message("Inputs:");
+// 	getMidiInNames().forEach(function(n){message(n);})
+
+// 	message("Outputs:");
+// 	getMidiOutNames().forEach(function(n){message(n);})
+// }
+
+
+
+</script>
+</head>
+
+<body>
+
+
+<div id="toolbar" class="panel">
+<h1>JV-1010 Editor</h1>
+</div>
+
+<div id="patchList" class="panel">
+Patch List
+</div>
+
+<div id="main" class="panel">
+Editor window
+</div>
+
+
+
+
+<!-- <br>
+<a class="button" href="javascript:clearConsole();">CLEAR CONSOLE</a>
+<a class="button" href="javascript:listDevices();">LIST DEVICES</a> -->
+
+
+</body>
+</html>
