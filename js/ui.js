@@ -88,9 +88,7 @@ function initializePatchList(element, bankName) {
 		var patch = patchList[i];
 		//element.append($('<option>', {value: i, text: patch.number + ' ' + patch.name}));
 
-		action = 'midiProgramBankChange(' + bankMsb + ',' +
-			bankLsb + ',' + i + ')';
-
+		action = 'midiProgramBankChange(' + i + ',' + bankMsb + ',' + bankLsb + ')';
 		items += '<li><span class="number">' + patch.number +
 			'</span> <a class="name" href="#"" onclick="' + action + '"">' + patch.name +
 			'</a><span class="infobox">' + patch.voices +

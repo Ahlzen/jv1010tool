@@ -11,7 +11,7 @@ var NoMidiPortValue = "None";
 // MIDI input handler
 
 function onMidiMessage(event) {
-	console.log(event.receivedTime + ": " + toHexStrings(event.data));
+	console.log('Received: [' + toHexStrings(event.data) + ']');
 
 	if (midiEcho && midiOut) {
 		// Echo MIDI data
@@ -77,7 +77,7 @@ function midiEchoOff() {
 // MIDI out
 
 function midiSend(data) {
-	console.log('midiSend [' + toHexStrings(data) + ']');
+	console.log('Sent: [' + toHexStrings(data) + ']');
 	if (!midiOut) {
 		return;
 	}
