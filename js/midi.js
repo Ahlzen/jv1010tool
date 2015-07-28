@@ -48,6 +48,11 @@ function listPorts(midiAccess) {
 // }
 
 
+
+
+
+
+
 // Utility functions
 
 function midiAvailable() {
@@ -87,6 +92,9 @@ function getMidiPort(ports, portName) {
 	});
 	return p;
 }
+
+
+
 
 // // obsolete
 // function midiAvailable() {
