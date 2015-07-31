@@ -1,3 +1,5 @@
+midi = new Midi();
+
 function showError(message) {
 	console.log("ERROR: " + message);
 	alert(message);
@@ -7,7 +9,7 @@ function showError(message) {
 // Initialization
 
 function initializeApp() {
-	initializeMidi(onMidiAvailable, onNoMidi);
+	midi.initialize(onMidiAvailable, onNoMidi);
 }
 
 function onMidiAvailable(){
@@ -19,22 +21,19 @@ function onNoMidi() {
 	showError("WebMIDI not supported.");
 }
 
+
 function initializeUI() {
 
 	// MIDI port selectors
 
 	//$('#midiIn').selectmenu();
-	addOption('#midiIn', NoMidiPortValue);
-	getMidiInNames().forEach(function(name){
-		addOption('#midiIn', name);
-	});
+	addOption('#midiIn', midi.NoMidiPortValue);
+	midi.getInNames().forEach(name => addOption('#midiIn', name));
 	$('#midiIn').change(onMidiInChange);
 
 	//$('#midiOut').selectmenu();
-	addOption('#midiOut', NoMidiPortValue);
-	getMidiOutNames().forEach(function(name){
-		addOption('#midiOut', name);
-	});
+	addOption('#midiOut', midi.NoMidiPortValue);
+	midi.getOutNames().forEach(name => addOption('#midiOut', name));
 	$('#midiOut').change(onMidiOutChange);
 
 
@@ -58,19 +57,19 @@ function readPrefs() {
 	var midiInVal = getPrefs('midiIn');
 	if (midiInVal) {
 		$('#midiIn').val(midiInVal);
-		useMidiIn(midiInVal);
+		midi.useMidiIn(midiInVal);
 	}
 
 	var midiOutVal = getPrefs('midiOut');
 	if (midiOutVal) {
 		$('#midiOut').val(midiOutVal);
-		useMidiOut(midiOutVal);	
+		midi.useMidiOut(midiOutVal);	
 	}
 
 	var midiEchoVal = getPrefs('midiEcho');
 	if (midiEchoVal != null) {
 		$('#midiEcho').prop('checked', midiEchoVal);
-		setMidiEcho(midiEchoVal);	
+		midi.setMidiEcho(midiEchoVal);	
 	}
 }
 
@@ -88,7 +87,7 @@ function initializePatchList(element, bankName) {
 		var patch = patchList[i];
 		//element.append($('<option>', {value: i, text: patch.number + ' ' + patch.name}));
 
-		action = 'midiProgramBankChange(' + i + ',' + bankMsb + ',' + bankLsb + ')';
+		action = 'midi.sendProgramBankChange(' + i + ',' + bankMsb + ',' + bankLsb + ')';
 		items += '<li><span class="number">' + patch.number +
 			'</span> <a class="name" href="#"" onclick="' + action + '"">' + patch.name +
 			'</a><span class="infobox">' + patch.voices +
@@ -101,7 +100,7 @@ function initializePatchList(element, bankName) {
 		bankMsb = bank.msb;
 		bankLsb = bank.lsb;
 		console.log("Bank " + bankMsb + " " + bankLsb + ", Program " + program);
-		midiProgramBankChange(program, bankMsb, bankLsb);
+		midi.sendProgramBankChange(program, bankMsb, bankLsb);
 	});
 }
 
@@ -117,23 +116,19 @@ function addOption(selector, val, txt) {
 
 function onMidiInChange() {
 	var portName = $("#midiIn").val();
-	useMidiIn(portName);
+	midi.useMidiIn(portName);
 	setPrefs('midiIn', portName);
 }
 
 function onMidiOutChange() {
 	var portName = $("#midiOut").val();
-	useMidiOut(portName);
+	midi.useMidiOut(portName);
 	setPrefs('midiOut', portName)
 }
 
 function onToggleMidiEcho() {
 	var enable = $("#midiEcho").prop('checked');
-	if (enable) {
-		midiEchoOn();
-	} else {
-		midiEchoOff();
-	}
+	midi.setMidiEcho(enable);
 	setPrefs('midiEcho', enable);
 }
 

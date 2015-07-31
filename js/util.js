@@ -1,13 +1,3 @@
-// Console
-
-function message(text) {
-	$('#console').append(text + '<br/>');
-}
-function clearConsole() {
-	$('#console').html('Console window<br/>');
-}
-
-
 // String formatting
 // based on code from StackOverflow:
 // http://stackoverflow.com/questions/610406/javascript-equivalent-to-printf-string-format
@@ -75,4 +65,17 @@ function getCookie(cname) {
         if (c.indexOf(name) == 0) return c.substring(name.length, c.length);
     }
     return null;
+}
+
+
+// Utility/debug
+
+function toHexStrings(data) {
+	//return data.map(function(d){return d.toString(16);});
+	// Ugly, but works with both Uint8Array and Array:
+	var arr = [];
+	for (var i = 0; i < data.length; i++) {
+		arr.push(data[i].toString(16));
+	}
+	return arr;
 }

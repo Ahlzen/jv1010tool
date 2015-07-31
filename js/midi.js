@@ -1,127 +1,154 @@
-var midi = null;
+var Midi = function() {
+	// WebMIDI objects
+	this.m = null;
+	this.midiIn = null;
+	this.midiOut = null;
+	this.midiInPorts = [];
+	this.midiOutPorts = [];
+
+	// MIDI settings
+	this.channel = 0;
+	this.midiEcho = false;
+
+	// Constants
+	this.NoMidiPortValue = "None";
+}
 
 
 // Initialization
 
-function initializeMidi(onSuccess, onFail) {
-	midi = null;
+Midi.prototype.initialize = function(onSuccess, onFail) {
+    // TODO: Request sysex access!!
+    var that = this;
 	navigator.requestMIDIAccess().then(
 		function(midiAccess) {
 			console.log("WebMIDI supported.");
-			midi = midiAccess;
-			listPorts();
+			
+			that.m = midiAccess;
+			midiAccess.inputs.forEach(port => that.midiInPorts.push(port));
+			midiAccess.outputs.forEach(port => that.midiOutPorts.push(port));
+			
+			that.listPorts();
 			if (onSuccess) { onSuccess(); }
 		},
-		function (error) {
+		function(error) {
 			console.log("WebMIDI not supported. Error code: " + error.code);
 			if (onFail) { onFail(); }
 		}
 	);
+}
 
-		// onsuccesscallback,
-		// onerrorcallback);
-
+Midi.prototype.listPorts = function() {
+	this.midiInPorts.forEach(port => console.log("In: " + port.name));
+	this.midiOutPorts.forEach(port => console.log("Out: " + port.name));
 }
 
 
-function listPorts(midiAccess) {
-	getMidiInNames().forEach(function(port){
-		console.log("In: " + port);});
-	getMidiOutNames().forEach(function(port){
-		console.log("Out: " + port);});
-};
+// MIDI settings/state
+
+Midi.prototype.useMidiIn = function(portName) {
+	var port = this.getInPort(portName);
+
+	// Remove any existing listener
+	if (this.midiIn) {
+		this.midiIn.onmidimessage = null;
+	}
+
+	if (port) {
+		this.midiIn = port;
+		this.midiIn.onmidimessage = message => this.onMessage(this,message);
+		console.log("Using MIDI in: " + portName);
+	} else {
+		showError("MIDI port not available");
+	}	
+}
+
+Midi.prototype.useMidiOut = function(portName) {
+	var port = this.getOutPort(portName);
+
+	this.sendAllNotesOff(); // To avoid stuck notes
+
+	if (port) {
+		this.midiOut = port;
+		console.log("Using MIDI out: " + portName);
+	} else {
+		showError("MIDI port not available");
+	}
+}
+
+Midi.prototype.setMidiEcho = function(enabled) {
+	if (enabled) {
+		console.log("MIDI echo on");
+		this.midiEcho = true;
+	} else {
+		console.log("MIDI echo off");
+		this.sendAllNotesOff(); // To avoid stuck notes
+		this.midiEcho = false;
+	}
+}
 
 
-// function onsuccesscallback(midiAccess) {
-// 	midi = midiAccess;
+// MIDI out
 
-// 	// List available midi ports
-// 	console.log("WebMIDI supported.");
-// 	getMidiInNames.forEach(function(port){
-// 		console.log("In: " + port.name);});
-// 	getMidiOutNames.forEach(function(port){
-// 		console.log("Out: " + port.name);});
-// };
+Midi.prototype.sendMessage = function(bytes) {
+	console.log('Sent: [' + toHexStrings(bytes) + ']');
+	if (!this.midiOut) {
+		return;
+	}
+	this.midiOut.send(bytes);
+}
 
-// function onerrorcallback(error) {
-// 	console.log("WebMIDI not supported. Error code: " + error.code);
-// }
+Midi.prototype.sendProgramBankChange = function(program, bankMsb, bankLsb) {
+	// Special case: For banks with more than 128 programs,
+	// increment the bank LSB and subtract 128 from program #:
+	if (program > 127) {
+		program -= 127;
+		bankLsb++;
+	}
 
+	this.sendMessage([0xb0+this.channel, 0x00, bankMsb]); // Bank select MSB
+	this.sendMessage([0xb0+this.channel, 0x20, bankLsb]); // Bank select LSB
+	this.sendMessage([0xc0+this.channel, program]); // Program change
+}
 
-
-
+Midi.prototype.sendAllNotesOff = function() {
+	for (var chan = 0; chan < 16; chan++) {
+		this.sendMessage([0xb0+chan, 123, 0]);
+	}
+}
 
 
 
 // Utility functions
 
-function midiAvailable() {
-	return ! (midi == null);
+Midi.prototype.available = function() {
+	return this.m;
+}
+
+Midi.prototype.getInNames = function() {
+	return this.midiInPorts.map(port => port.name);
+}
+
+Midi.prototype.getOutNames = function() {
+	return this.midiOutPorts.map(port => port.name);
+}
+
+Midi.prototype.getInPort = function(portName) {
+	return this.midiInPorts.find(port => port.name === portName);
+}
+
+Midi.prototype.getOutPort = function(portName) {
+	return this.midiOutPorts.find(port => port.name === portName);
 }
 
 
-function getMidiInNames() {
-	return getNames(midi.inputs);
+// MIDI input handler
+
+Midi.prototype.onMessage = function(midi,event) {
+	console.log('Received: [' + toHexStrings(event.data) + ']');
+
+	// Echo MIDI message?
+	if (this.midiEcho && this.midiOut) {
+		this.sendMessage(event.data);
+	}
 }
-
-function getMidiOutNames() {
-	return getNames(midi.outputs);
-}
-
-function getNames(ports) {
-	var list = [];
-	ports.forEach(function(port){
-		list.push(port.name);
-	});
-	return list;
-}
-
-
-function getMidiInPort(portName) {
-	return getMidiPort(midi.inputs, portName);
-}
-
-function getMidiOutPort(portName) {
-	return getMidiPort(midi.outputs, portName);
-}
-
-function getMidiPort(ports, portName) {
-	var p = null;
-	ports.forEach(function(port) {
-		if (port.name == portName) { p = port; }
-	});
-	return p;
-}
-
-
-
-
-// // obsolete
-// function midiAvailable() {
-// 	if (!midi) {
-// 		message( "WebMIDI not supported.");
-// 		return false;
-// 	}
-// 	return true;
-// }
-
-// // obsolete
-// function listDevices() {
-// 	if (!midiAvailable()) return;
-
-// 	message("Inputs:");
-// 	var inputs = midi.inputs;
-// 	inputs.forEach(function(port){
-// 		message(port.name + " (" + port.manufacturer +
-// 		", " + port.version + ")");
-// 	});
-
-// 	message("Outputs:");
-// 	var outputs = midi.outputs;
-// 	outputs.forEach(function(port){
-// 		message(port.name + " (" + port.manufacturer +
-// 		", " + port.version + ")");
-// 	});
-// }
-
-
