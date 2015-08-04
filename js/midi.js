@@ -1,3 +1,5 @@
+'use strict';
+
 var Midi = function() {
 	// WebMIDI objects
 	this.m = null;
@@ -20,7 +22,11 @@ var Midi = function() {
 Midi.prototype.initialize = function(onSuccess, onFail) {
     // TODO: Request sysex access!!
     var that = this;
-	navigator.requestMIDIAccess().then(
+    var options = {sysex: true};
+    //options.sysex = true;
+    //options['sysex'] = true;
+
+	navigator.requestMIDIAccess(options).then(
 		function(midiAccess) {
 			console.log("WebMIDI supported.");
 			
@@ -32,7 +38,7 @@ Midi.prototype.initialize = function(onSuccess, onFail) {
 			if (onSuccess) { onSuccess(); }
 		},
 		function(error) {
-			console.log("WebMIDI not supported. Error code: " + error.code);
+			console.log("WebMIDI not supported: " + error.name);
 			if (onFail) { onFail(); }
 		}
 	);
