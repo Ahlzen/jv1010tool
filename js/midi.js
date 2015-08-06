@@ -20,12 +20,8 @@ var Midi = function() {
 // Initialization
 
 Midi.prototype.initialize = function(onSuccess, onFail) {
-    // TODO: Request sysex access!!
     var that = this;
-    var options = {sysex: true};
-    //options.sysex = true;
-    //options['sysex'] = true;
-
+    var options = {sysex: true}; // we need sysex access
 	navigator.requestMIDIAccess(options).then(
 		function(midiAccess) {
 			console.log("WebMIDI supported.");
