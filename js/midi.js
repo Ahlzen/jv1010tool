@@ -14,6 +14,9 @@ var Midi = function() {
 
 	// Constants
 	this.NoMidiPortValue = "None";
+
+	// Sysex event handler
+	this.onSysex = null;
 }
 
 
@@ -100,6 +103,15 @@ Midi.prototype.sendMessage = function(bytes) {
 	this.midiOut.send(bytes);
 }
 
+Midi.prototype.sendProgramChange = function(program) {
+	this.sendMessage([0xc0+this.channel, program]);
+}
+
+Midi.prototype.sendBankChange = function(bankMsb, bankLsb) {
+	this.sendMessage([0xb0+this.channel, 0x00, bankMsb]);
+	this.sendMessage([0xb0+this.channel, 0x20, bankLsb]);
+}
+
 Midi.prototype.sendProgramBankChange = function(program, bankMsb, bankLsb) {
 	// Special case: For banks with more than 128 programs,
 	// increment the bank LSB and subtract 128 from program #:
@@ -107,10 +119,8 @@ Midi.prototype.sendProgramBankChange = function(program, bankMsb, bankLsb) {
 		program -= 127;
 		bankLsb++;
 	}
-
-	this.sendMessage([0xb0+this.channel, 0x00, bankMsb]); // Bank select MSB
-	this.sendMessage([0xb0+this.channel, 0x20, bankLsb]); // Bank select LSB
-	this.sendMessage([0xc0+this.channel, program]); // Program change
+	this.sendProgramChange(program);
+	this.sendBankChange(bankMsb, bankLsb);
 }
 
 Midi.prototype.sendAllNotesOff = function() {
@@ -118,7 +128,6 @@ Midi.prototype.sendAllNotesOff = function() {
 		this.sendMessage([0xb0+chan, 123, 0]);
 	}
 }
-
 
 
 // Utility functions
@@ -149,8 +158,14 @@ Midi.prototype.getOutPort = function(portName) {
 Midi.prototype.onMessage = function(midi,event) {
 	console.log('Received: [' + toHexStrings(event.data) + ']');
 
-	// Echo MIDI message?
-	if (this.midiEcho && this.midiOut) {
+	if (event.data[0] == 0xf0) {
+		if (this.onSysex) {
+			this.onSysex(event.data);
+		}
+	}
+
+	else if (this.midiEcho && this.midiOut) {
+		// Echo message
 		this.sendMessage(event.data);
 	}
 }

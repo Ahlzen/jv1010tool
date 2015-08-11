@@ -1,4 +1,5 @@
 midi = new Midi();
+sysex = new SysexHandler(midi);
 
 function showError(message) {
 	console.log("ERROR: " + message);
@@ -36,11 +37,7 @@ function initializeUI() {
 	midi.getOutNames().forEach(name => addOption('#midiOut', name));
 	$('#midiOut').change(onMidiOutChange);
 
-
 	// Patch list
-	// $('expandAllPatches').button().click(onExpandAllPatches);
-	// $('collapseAllPatches').button().click(onCollapseAllPatches);
-
 	$('#patchList').accordion({
       heightStyle: "fill"
     });
@@ -132,8 +129,8 @@ function onToggleMidiEcho() {
 	setPrefs('midiEcho', enable);
 }
 
-// function onExpandAllPatches() {
-// }
-
-// function onCollapseAllPatches() {
-// }
+function onSendIdentityRequest() {
+	sysex.identityRequest(
+		(eventName, data) => alert("Sysex success: " + eventName),
+		(eventName) => alert("Sysex fail: " + eventName));
+}

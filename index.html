@@ -8,8 +8,10 @@
 	<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 	<script src="https://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
 	<script src="js/WebMIDIAPIShim/WebMIDIAPI.js"></script>
+	<script src="js/underscore-1.8.3.min.js"></script>
 	<script src="js/util.js"></script>
 	<script src="js/midi.js"></script>
+	<script src="js/sysexHandler.js"></script>
 	<script src="js/patchList.js"></script>
 	<script src="js/ui.js"></script>
 	<script type="text/javascript">
@@ -65,7 +67,9 @@
 </div>
 
 <div id="main" class="panel">
-&nbsp;
+<h2>SysEx</h2>
+<button type="button" onclick="onSendIdentityRequest();">Identity Request</button>
+
 </div>
 
 </form>
