@@ -134,3 +134,11 @@ function onSendIdentityRequest() {
 		(eventName, data) => alert("Sysex success: " + eventName),
 		(eventName) => alert("Sysex fail: " + eventName));
 }
+
+function onSendUserPatchRequest() {
+	var patchNumber = 10;
+	sysex.onSendUserPatchRequest(
+		(eventName, patch) => alert("Sysex success: PatchName = " + patch.common.PatchName),
+		(eventName) => alert("Sysex fail: " + eventName),
+		patchNumber);
+}

@@ -1,3 +1,5 @@
+'use strict';
+
 var SysexData = function(dataSize, data = null) {
    if (data) {
       console.assert(data.length === dataSize,
@@ -8,18 +10,19 @@ var SysexData = function(dataSize, data = null) {
    }
 }
 
-SysexData.prototype.getChecksum = function(address) {
-   // Sum up address bytes
-   var sum = address & 0x0000007f +
-      (address & 0x00007f00) >> 8 +
-      (address & 0x007f0000) >> 16 +
-      (address & 0x7f000000) >> 24;
-   // Add data bytes
-   sum = this.data.reduce((p,c,i,a) => p+c, sum);
-   // Calculate checksum = 128 - (sum % 128)
-   var checksum = 128 - (sum & 0xff);
-   return checksum;
-}
+// OBSOLETE. Use midiUtil.getChecksum()
+// SysexData.prototype.getChecksum = function(address) {
+//    // // Sum up address bytes
+//    // var sum = address & 0x0000007f +
+//    //    (address & 0x00007f00) >> 8 +
+//    //    (address & 0x007f0000) >> 16 +
+//    //    (address & 0x7f000000) >> 24;
+//    // Add data bytes
+//    sum = this.data.reduce((p,c,i,a) => p+c, sum);
+//    // Calculate checksum = 128 - (sum % 128)
+//    var checksum = 128 - (sum & 0xff);
+//    return checksum;
+// }
 
 
 // Internal utility
@@ -101,6 +104,17 @@ function addStringAccessor(obj, offset, length, name) {
 }
 
 
+////// PATCH //////
+
+var Patch = function(commonData=null, tone1Data=null, tone2Data = null, tone3Data = null) {
+   this.common = new PatchCommon(commonData);
+   this.tone1 = new PatchTone(tone1Data);
+   this.tone2 = new PatchTone(tone2Data);
+   this.tone3 = new PatchTone(tone3Data);
+   this.tone4 = new PatchTone(tone4Data);
+}
+
+
 ////// PATCH COMMON //////
 
 var PatchCommon = function(data = null) {   
@@ -110,7 +124,7 @@ PatchCommon.prototype = Object.create(SysexData.prototype);
 PatchCommon.prototype.constructor = PatchCommon;
 
 const patchCommonSize = 0x4a;
-patchCommonProperties = [
+var patchCommonProperties = [
    [PropertyType.String, 0x00, 12, "PatchName"],
    [PropertyType.Int, 0x0c, 0, 39, "EFXType"],
    [PropertyType.Int, 0x0d, 0, 127, "EFXParameter1"],
@@ -185,8 +199,8 @@ var PatchTone = function(data = null) {
 PatchTone.prototype = Object.create(SysexData.prototype);
 PatchTone.prototype.constructor = PatchTone;
 
-const patchToneSize = 0x81; // 0x101 in 7-bit
-patchToneProperties = [
+const patchToneSize = 0x101; // 7-bit
+var patchToneProperties = [
    [PropertyType.Int, 0x00, 0, 1, "ToneSwitch"],
    [PropertyType.Int, 0x01, 0, 2, "WaveGroupType"],
    [PropertyType.Int, 0x02, 0, 127, "WaveGroupID"],
@@ -314,6 +328,6 @@ patchToneProperties = [
    [PropertyType.Int, 0x7d, 0, 3, "OutputAssign"],
    [PropertyType.Int, 0x7e, 0, 127, "MixEFXSendLevel"],
    [PropertyType.Int, 0x7f, 0, 127, "ChorusSendLevel"],
-   [PropertyType.Int, 0x80 /* 0x100 in 7-bit */, 0, 127, "ReverbSendLevel"]];
+   [PropertyType.Int, 0x80 /* 7-bit: 0x100 */, 0, 127, "ReverbSendLevel"]];
 patchToneProperties.map(
    p => addProperty(PatchTone.prototype, p));

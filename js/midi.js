@@ -155,7 +155,7 @@ Midi.prototype.getOutPort = function(portName) {
 
 // MIDI input handler
 
-Midi.prototype.onMessage = function(midi,event) {
+Midi.prototype.onMessage = function(midi, event) {
 	console.log('Received: [' + toHexStrings(event.data) + ']');
 
 	if (event.data[0] == 0xf0) {
@@ -167,5 +167,32 @@ Midi.prototype.onMessage = function(midi,event) {
 	else if (this.midiEcho && this.midiOut) {
 		// Echo message
 		this.sendMessage(event.data);
+	}
+}
+
+
+// Utils
+
+var midiUtil = {
+	startsWith: function(data, pattern) {
+		if (data.length < pattern.length) return false;
+		for (var i = 0; i < pattern.length; i++) {
+			if (data[i] !== pattern[i]) return false;
+		}
+		return true;
+	},
+	addressToBytes: function(address) {
+		// 32-bit address/size to array of bytes
+	    return [address & 0x0000007f,
+	        (address & 0x00007f00) >> 8,
+	        (address & 0x007f0000) >> 16,
+	        (address & 0x7f000000) >> 24];
+	},
+	getChecksum: function(data) {
+	   // Sum up data bytes
+	   sum = this.data.reduce((p,c,i,a) => p+c, 0);
+	   // Calculate checksum = 128 - (sum % 128)
+	   var checksum = 128 - (sum & 0xff);
+	   return checksum;
 	}
 }
