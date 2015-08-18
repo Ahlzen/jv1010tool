@@ -26,7 +26,7 @@ var SysexHandler = function(midi) {
 
 // Misc requests
 
-SysexHandler.prototype.identityRequest = function(onSuccess, onFail) {
+SysexHandler.prototype.sendIdentityRequest = function(onSuccess, onFail) {
 	this.initRequest("IdentityRequest", onSuccess, onFail, 200);
 	this.m.sendMessage([0xf0,0x7e,0x10,0x06,0x01,0xf7]);
 }
@@ -34,7 +34,7 @@ SysexHandler.prototype.identityRequest = function(onSuccess, onFail) {
 
 // Data requests
 
-SysexHandler.prototype.userPatchRequest = function(onSuccess, onFail, patchNumber) {
+SysexHandler.prototype.sendUserPatchRequest = function(onSuccess, onFail, patchNumber) {
 	this.initRequest("UserPatchRequest", onSuccess, onFail, 1000);
 	this.requestData = {
 		baseAddress: 0x11000000 + 0x00010000 * patchNumber
@@ -177,7 +177,7 @@ SysexHandler.prototype.fail = function(eventName) {
 }
 
 SysexHandler.prototype.sendDataRequest = function(address, size) {
-	var command = [0x41, 0x10, 0x6a, 0x11];
+	var command = [0x41, 0x10, 0x6a, 0x11, 0x12];
 	var address = midiUtil.addressToBytes(address);
 	var size = midiUtil.addressToBytes(size);
 	var data = address.concat(size);
@@ -185,16 +185,3 @@ SysexHandler.prototype.sendDataRequest = function(address, size) {
 	var bytes = [].concat(0xf0, command, data, checksum, 0xf7);
 	this.m.sendMessage(bytes);
 }
-
-
-// Utility functions
-
-// OBSOLETE. Use midiUtil.startsWith()
-// SysexHandler.prototype.startsWith = function(data,pattern) {
-// 	if (data.length < pattern.length) return false;
-// 	for (var i = 0; i < pattern.length; i++) {
-// 		if (data[i] !== pattern[i]) return false;
-// 	}
-// 	return true;
-// }
-

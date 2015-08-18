@@ -130,14 +130,15 @@ function onToggleMidiEcho() {
 }
 
 function onSendIdentityRequest() {
-	sysex.identityRequest(
+	sysex.sendIdentityRequest(
 		(eventName, data) => alert("Sysex success: " + eventName),
 		(eventName) => alert("Sysex fail: " + eventName));
 }
 
 function onSendUserPatchRequest() {
 	var patchNumber = 10;
-	sysex.onSendUserPatchRequest(
+	//var patchNumber = $("#patchNumber").value; //parseInt($("#patchNumber").value)-1;
+	sysex.sendUserPatchRequest(
 		(eventName, patch) => alert("Sysex success: PatchName = " + patch.common.PatchName),
 		(eventName) => alert("Sysex fail: " + eventName),
 		patchNumber);

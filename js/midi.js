@@ -182,16 +182,15 @@ var midiUtil = {
 		return true;
 	},
 	addressToBytes: function(address) {
-		// 32-bit address/size to array of bytes
-	    return [address & 0x0000007f,
-	        (address & 0x00007f00) >> 8,
-	        (address & 0x007f0000) >> 16,
-	        (address & 0x7f000000) >> 24];
+		// 28/32-bit address/size to array of bytes
+	    return [
+	    	(address & 0x7f000000) >> 24,
+	    	(address & 0x007f0000) >> 16,
+	    	(address & 0x00007f00) >> 8,
+	    	 address & 0x0000007f];
 	},
 	getChecksum: function(data) {
-	   // Sum up data bytes
-	   sum = this.data.reduce((p,c,i,a) => p+c, 0);
-	   // Calculate checksum = 128 - (sum % 128)
+	   var sum = data.reduce((p,c,i,a) => p+c, 0);
 	   var checksum = 128 - (sum & 0xff);
 	   return checksum;
 	}

@@ -10,20 +10,6 @@ var SysexData = function(dataSize, data = null) {
    }
 }
 
-// OBSOLETE. Use midiUtil.getChecksum()
-// SysexData.prototype.getChecksum = function(address) {
-//    // // Sum up address bytes
-//    // var sum = address & 0x0000007f +
-//    //    (address & 0x00007f00) >> 8 +
-//    //    (address & 0x007f0000) >> 16 +
-//    //    (address & 0x7f000000) >> 24;
-//    // Add data bytes
-//    sum = this.data.reduce((p,c,i,a) => p+c, sum);
-//    // Calculate checksum = 128 - (sum % 128)
-//    var checksum = 128 - (sum & 0xff);
-//    return checksum;
-// }
-
 
 // Internal utility
 
