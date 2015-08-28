@@ -111,8 +111,8 @@ function initializePatchList(element, bankName) {
 	var bank = Banks[bankName];
 	var patchList = bank.patches;
 
-	bankMsb = bank.msb;
-	bankLsb = bank.lsb;
+	var bankMsb = bank.msb;
+	var bankLsb = bank.lsb;
 
 	//element.attr('size', patchList.length);
 	var items = '';
@@ -120,7 +120,7 @@ function initializePatchList(element, bankName) {
 		var patch = patchList[i];
 		//element.append($('<option>', {value: i, text: patch.number + ' ' + patch.name}));
 
-		action = 'midi.sendProgramBankChange(' + i + ',' + bankMsb + ',' + bankLsb + ')';
+		var action = 'midi.sendProgramBankChange(' + i + ',' + bankMsb + ',' + bankLsb + ')';
 		items += '<li><span class="number">' + patch.number +
 			'</span> <a class="name" href="#"" onclick="' + action + '"">' + patch.name +
 			'</a><span class="infobox">' + patch.voices +

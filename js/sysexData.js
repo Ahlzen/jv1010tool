@@ -1,6 +1,6 @@
 'use strict';
 
-var SysexData = function(dataSize, data = null) {
+var SysexData = function(dataSize, data) {
    if (data) {
       console.assert(data.length === dataSize,
          "Unexpected data size.");
@@ -10,7 +10,7 @@ var SysexData = function(dataSize, data = null) {
    }
 }
 
-SysexData.prototype.copyDataFrom = function(data, start = 0) {
+SysexData.prototype.copyDataFrom = function(data, start) {
    console.assert(start + data.length <= this.data.length, "Data too large.");
    for (var i = 0 ; i < data.length ; i++) {
       this.data[start+i] = data[i];
@@ -99,20 +99,20 @@ function addStringAccessor(obj, offset, length, name) {
 
 ////// PATCH //////
 
-var Patch = function(commonData=null, tone1Data=null, tone2Data = null, tone3Data = null, tone4Data = null) {
+var Patch = function() {
    this.number = 0;
-   this.common = new PatchCommon(commonData);
+   this.common = new PatchCommon();
    this.tones = [
-      new PatchTone(tone1Data),
-      new PatchTone(tone2Data),
-      new PatchTone(tone3Data),
-      new PatchTone(tone4Data)];
+      new PatchTone(),
+      new PatchTone(),
+      new PatchTone(),
+      new PatchTone()];
 }
 
 
 ////// PATCH COMMON //////
 
-var PatchCommon = function(data = null) {   
+var PatchCommon = function(data) {   
    SysexData.call(this, patchCommonSize, data);
 }
 PatchCommon.prototype = Object.create(SysexData.prototype);
@@ -188,7 +188,7 @@ patchCommonProperties.map(
 
 ////// PATCH TONE //////
 
-var PatchTone = function(data = null) {
+var PatchTone = function(data) {
    SysexData.call(this, patchToneSize, data);
 }
 PatchTone.prototype = Object.create(SysexData.prototype);
