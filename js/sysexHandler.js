@@ -108,13 +108,11 @@ SysexHandler.prototype.processDataRequest = function(bytes) {
 
 SysexHandler.prototype.onData = function(data) {
 	console.log("SysexHandler.onData");
-
 	if (this.requestType === 'IdentityRequest') {
 		if (midiUtil.startsWith(data,
 			[0xf0, 0x7e, 0x10, 0x06, 0x02, 0x41, 0x6A, 0x00, 0x05]))
 		{
 			// Identity Reply message
-			//this.clearRequest();
 			this.success("IdentityReply", null);
 		}
 		else if (midiUtil.startsWith(data,
@@ -177,9 +175,9 @@ SysexHandler.prototype.fail = function(eventName) {
 }
 
 SysexHandler.prototype.sendDataRequest = function(address, size) {
-	var command = [0x41, 0x10, 0x6a, 0x11, 0x12];
+	var command = [0x41, 0x10, 0x6a, 0x11];
 	var address = midiUtil.addressToBytes(address);
-	var size = midiUtil.addressToBytes(size);
+	var size = midiUtil.sizeToBytes(size);
 	var data = address.concat(size);
 	var checksum = midiUtil.getChecksum(data);
 	var bytes = [].concat(0xf0, command, data, checksum, 0xf7);

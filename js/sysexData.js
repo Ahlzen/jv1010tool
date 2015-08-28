@@ -3,10 +3,17 @@
 var SysexData = function(dataSize, data = null) {
    if (data) {
       console.assert(data.length === dataSize,
-         "PatchCommon: Unexpected data size.");
+         "Unexpected data size.");
       this.data = Uint8Array.from(data);
    } else {
       this.data = new Uint8Array(dataSize);
+   }
+}
+
+SysexData.prototype.copyDataFrom = function(data, start = 0) {
+   console.assert(start + data.length <= this.data.length, "Data too large.");
+   for (var i = 0 ; i < data.length ; i++) {
+      this.data[start+i] = data[i];
    }
 }
 
@@ -92,19 +99,21 @@ function addStringAccessor(obj, offset, length, name) {
 
 ////// PATCH //////
 
-var Patch = function(commonData=null, tone1Data=null, tone2Data = null, tone3Data = null) {
+var Patch = function(commonData=null, tone1Data=null, tone2Data = null, tone3Data = null, tone4Data = null) {
+   this.number = 0;
    this.common = new PatchCommon(commonData);
-   this.tone1 = new PatchTone(tone1Data);
-   this.tone2 = new PatchTone(tone2Data);
-   this.tone3 = new PatchTone(tone3Data);
-   this.tone4 = new PatchTone(tone4Data);
+   this.tones = [
+      new PatchTone(tone1Data),
+      new PatchTone(tone2Data),
+      new PatchTone(tone3Data),
+      new PatchTone(tone4Data)];
 }
 
 
 ////// PATCH COMMON //////
 
 var PatchCommon = function(data = null) {   
-   SysexData.call(this, data, patchCommonSize);
+   SysexData.call(this, patchCommonSize, data);
 }
 PatchCommon.prototype = Object.create(SysexData.prototype);
 PatchCommon.prototype.constructor = PatchCommon;
@@ -180,12 +189,12 @@ patchCommonProperties.map(
 ////// PATCH TONE //////
 
 var PatchTone = function(data = null) {
-   SysexData.call(this, data, patchToneSize);
+   SysexData.call(this, patchToneSize, data);
 }
 PatchTone.prototype = Object.create(SysexData.prototype);
 PatchTone.prototype.constructor = PatchTone;
 
-const patchToneSize = 0x101; // 7-bit
+const patchToneSize = 0x81;
 var patchToneProperties = [
    [PropertyType.Int, 0x00, 0, 1, "ToneSwitch"],
    [PropertyType.Int, 0x01, 0, 2, "WaveGroupType"],

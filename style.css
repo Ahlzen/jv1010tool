@@ -47,6 +47,8 @@ h1 { font-size: 18pt; font-weight: bold; margin: 5px; display: inline; }
 }
 
 
+
+
 /* Toolbar controls */
 
 #midiIn,
@@ -117,4 +119,38 @@ h1 { font-size: 18pt; font-weight: bold; margin: 5px; display: inline; }
 
 #patchList li .mode {
 	color: #7e9;
+}
+
+
+/* Form elements etc */
+
+fieldset { margin-bottom: 20px; }
+
+#errors { font-weight: bold; color: red; font-size: 150%;}
+
+
+/* For FileDrop */
+
+.fd-zone {
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+}
+
+.fd-file {
+  opacity: 0;
+  font-size: 118px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 1;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  filter: alpha(opacity=0);
+}
+
+.fd-zone.over {
+	border-color: white;
+	background: #eee;
 }

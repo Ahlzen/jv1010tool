@@ -9,9 +9,11 @@
 	<script src="https://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
 	<script src="js/WebMIDIAPIShim/WebMIDIAPI.js"></script>
 	<script src="js/underscore-1.8.3.min.js"></script>
+	<script src="js/filedrop-min.js"></script>
 	<script src="js/util.js"></script>
 	<script src="js/midi.js"></script>
 	<script src="js/sysexData.js"></script>
+	<script src="js/sysexParser.js"></script>
 	<script src="js/sysexHandler.js"></script>
 	<script src="js/patchList.js"></script>
 	<script src="js/ui.js"></script>
@@ -21,7 +23,7 @@
 </head>
 
 <body>
-<form action="#">
+<!-- <form action="#"> -->
 
 <div id="toolbar" class="panel">
     <label for="midiIn">MIDI In:</label>
@@ -68,16 +70,32 @@
 </div>
 
 <div id="main" class="panel">
-<h2>SysEx</h2>
 
-<button type="button" onclick="onSendIdentityRequest();">Identity Request</button>
-<br/>
-
-<button type="button" onclick="onSendUserPatchRequest();">User Patch Request</button>
-<input id="patchNumber" type="number" value="1"></input>
-
+<div id="errors">
 </div>
 
-</form>
+<fieldset id="getData">
+<legend>Get Data</legend>
+<button type="button" onclick="onSendUserPatchRequest();">Get User Patch</button>
+#<input id="patchNumber" type="number" value="1"></input>
+</fieldset>
+
+<fieldset id="sendData">
+<legend>Send Data</legend>
+<!-- TEST CODE -->
+<div id="zbasic" style="border: 1px solid;">
+  <p>Drop .syx file here or click to browse</p>
+</div>
+<pre id="fileContents">
+</pre>
+</fieldset>
+
+<fieldset id="miscSysex">
+<legend>Misc SysEx</legend>
+<button type="button" onclick="onSendIdentityRequest();">Identity Request</button>
+</fieldset>
+
+
+<!-- </form> -->
 </body>
 </html>

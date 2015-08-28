@@ -1,3 +1,5 @@
+'use strict';
+
 // String formatting
 // based on code from StackOverflow:
 // http://stackoverflow.com/questions/610406/javascript-equivalent-to-printf-string-format
