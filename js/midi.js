@@ -183,7 +183,9 @@ Midi.prototype.onMessage = function(midi, event) {
 		}
 	}
 
-	else if (/*this.midiEcho &&*/ this.midiOut) {
+	// TODO: Echo only MIDI events from controller input
+
+	else if (this.midiOut) {
 		// Echo message
 		this.sendMessage(event.data);
 	}

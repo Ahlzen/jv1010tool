@@ -45,8 +45,6 @@ SysexHandler.prototype.sendUserPatchRequest = function(onSuccess, onFail, patchN
 // Event handlers
 
 SysexHandler.prototype.onData = function(data) {
-	console.log("SysexHandler.onData");
-	
 	// Identity Reply message
 	if (midiUtil.startsWith(data, [0xf0, 0x7e, 0x10, 0x06, 0x02, 0x41, 0x6A, 0x00, 0x05])) {
 		this.success("IdentityReply", null);
