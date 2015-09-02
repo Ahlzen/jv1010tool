@@ -41,10 +41,12 @@ function initializeMidiUI() {
 	midi.getOutNames().forEach(name => addOption('#midiOut', name));
 	$('#midiOut').change(onMidiOutChange);
 
+	addOption('#controllerIn', midi.NoMidiPortValue);
+	midi.getInNames().forEach(name => addOption('#controllerIn', name));
+	$('#controllerIn').change(onControllerInChange);	
+
 	// Patch list
-	$('#patchList').accordion({
-      heightStyle: "fill"
-    });
+	$('#patchList').accordion({heightStyle: "fill"});
     initializePatchList($('#patchListUser'), "User");
     initializePatchList($('#patchListA'), "Preset A");
     initializePatchList($('#patchListB'), "Preset B");
@@ -99,10 +101,16 @@ function readPrefs() {
 		midi.useMidiOut(midiOutVal);	
 	}
 
-	var midiEchoVal = getPrefs('midiEcho');
-	if (midiEchoVal != null) {
-		$('#midiEcho').prop('checked', midiEchoVal);
-		midi.setMidiEcho(midiEchoVal);	
+	// var midiEchoVal = getPrefs('midiEcho');
+	// if (midiEchoVal != null) {
+	// 	$('#midiEcho').prop('checked', midiEchoVal);
+	// 	midi.setMidiEcho(midiEchoVal);	
+	// }
+
+	var controllerInVal = getPrefs('controllerIn');
+	if (controllerInVal) {
+		$('#controllerIn').val(controllerInVal);
+		midi.useControllerIn(controllerInVal);
 	}
 }
 
@@ -159,11 +167,17 @@ function onMidiOutChange() {
 	setPrefs('midiOut', portName)
 }
 
-function onToggleMidiEcho() {
-	var enable = $("#midiEcho").prop('checked');
-	midi.setMidiEcho(enable);
-	setPrefs('midiEcho', enable);
+function onControllerInChange() {
+	var portName = $("#controllerIn").val();
+	midi.useControllerIn(portName);
+	setPrefs('controllerIn', portName)
 }
+
+// function onToggleMidiEcho() {
+// 	var enable = $("#midiEcho").prop('checked');
+// 	midi.setMidiEcho(enable);
+// 	setPrefs('midiEcho', enable);
+// }
 
 function onSendIdentityRequest() {
 	sysex.sendIdentityRequest(
@@ -172,8 +186,9 @@ function onSendIdentityRequest() {
 }
 
 function onSendUserPatchRequest() {
-	var patchNumber = 10;
-	//var patchNumber = $("#patchNumber").value; //parseInt($("#patchNumber").value)-1;
+	//var patchNumber = 10;
+	var patchNumberStr = $("#patchNumber").val();
+	var patchNumber = parseInt(patchNumberStr) - 1;  //parseInt($("#patchNumber").value)-1;
 	sysex.sendUserPatchRequest(
 		(eventName, patch) => alert("Sysex success: PatchName = " + patch.common.PatchName),
 		(eventName) => alert("Sysex fail: " + eventName),

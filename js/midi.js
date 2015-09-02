@@ -5,6 +5,8 @@ var Midi = function() {
 	this.m = null;
 	this.midiIn = null;
 	this.midiOut = null;
+	this.controllerIn = null;
+
 	this.midiInPorts = [];
 	this.midiOutPorts = [];
 
@@ -81,16 +83,33 @@ Midi.prototype.useMidiOut = function(portName) {
 	}
 }
 
-Midi.prototype.setMidiEcho = function(enabled) {
-	if (enabled) {
-		console.log("MIDI echo on");
-		this.midiEcho = true;
-	} else {
-		console.log("MIDI echo off");
-		this.sendAllNotesOff(); // To avoid stuck notes
-		this.midiEcho = false;
+Midi.prototype.useControllerIn = function(portName) {
+	var port = this.getInPort(portName);
+
+	// Remove any existing listener
+	if (this.controllerIn) {
+		this.controllerIn.onmidimessage = null;
 	}
+
+	if (port) {
+		this.controllerIn = port;
+		this.controllerIn.onmidimessage = message => this.onMessage(this,message);
+		console.log("Using MIDI controller in: " + portName);
+	} else {
+		showError("MIDI port not available");
+	}	
 }
+
+// Midi.prototype.setMidiEcho = function(enabled) {
+// 	if (enabled) {
+// 		console.log("MIDI echo on");
+// 		this.midiEcho = true;
+// 	} else {
+// 		console.log("MIDI echo off");
+// 		this.sendAllNotesOff(); // To avoid stuck notes
+// 		this.midiEcho = false;
+// 	}
+// }
 
 
 // MIDI out
@@ -164,7 +183,7 @@ Midi.prototype.onMessage = function(midi, event) {
 		}
 	}
 
-	else if (this.midiEcho && this.midiOut) {
+	else if (/*this.midiEcho &&*/ this.midiOut) {
 		// Echo message
 		this.sendMessage(event.data);
 	}

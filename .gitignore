@@ -1,1 +1,3 @@
+# exclude sysex files I use for testing
+*.syx
 

@@ -52,7 +52,8 @@ h1 { font-size: 18pt; font-weight: bold; margin: 5px; display: inline; }
 /* Toolbar controls */
 
 #midiIn,
-#midiOut {
+#midiOut,
+#controllerIn {
 	width: 20%;
 }
 
