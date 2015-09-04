@@ -70,6 +70,43 @@ function getCookie(cname) {
 }
 
 
+// Building UInt8Arrays
+
+// Elements can be Array, UInt8Array or integer
+function buildUint8Array()
+{
+	// Sum up length
+	var length = 0;
+	for (var i = 0; i < arguments.length; i++) {
+	    var obj = arguments[i];
+	    if (obj instanceof Array || obj instanceof Uint8Array) {
+	    	length += obj.length;
+	    } else {
+	    	length++;
+	    }
+  	}
+
+  	// Create and fill typed array
+  	var arr = new Uint8Array(length);
+  	var offset = 0;
+	for (var i = 0; i < arguments.length; i++) {
+	    var obj = arguments[i];
+	    if (obj instanceof Array || obj instanceof Uint8Array)
+	    {
+	    	arr.set(obj, offset);
+	    	offset += obj.length;
+	    }
+	    else 
+	    {
+	    	arr.set([obj], offset);
+	    	offset++;
+	    }
+  	}
+  	return arr;
+}
+
+
+
 // Utility/debug
 
 function toHexStrings(data) {

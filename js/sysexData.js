@@ -50,7 +50,7 @@ var PropertyType = Object.freeze({
    "Int": 1, // simple integer value (0-127)
    "LargeInt": 2, // byte value split into two nibbles (0-255)
    "String": 3 // ASCII string
-})
+});
 
 function addProperty(obj, data) {
    switch (data[0]) {
@@ -109,6 +109,16 @@ var Patch = function() {
       new PatchTone()];
 }
 
+Patch.prototype.getSysexData = function() {
+   var sysex = buildUint8Array(
+      this.common.getSysexData(this.number),
+      this.tones[0].getSysexData(this.number, 0),
+      this.tones[1].getSysexData(this.number, 1),
+      this.tones[2].getSysexData(this.number, 2),
+      this.tones[3].getSysexData(this.number, 3));
+   return sysex;
+}
+
 
 ////// PATCH COMMON //////
 
@@ -117,6 +127,14 @@ var PatchCommon = function(data) {
 }
 PatchCommon.prototype = Object.create(SysexData.prototype);
 PatchCommon.prototype.constructor = PatchCommon;
+
+PatchCommon.prototype.getSysexData = function(patchNumber) {
+   var header = [0xf0,0x41,0x10,0x6a,0x12];
+   var address = [0x11,patchNumber,0x00,0x00];
+   var checksum = midiUtil.getChecksum(buildUint8Array(address, this.data));
+   var sysex = buildUint8Array(header, address, this.data, checksum, 0xf7);
+   return sysex;
+}
 
 const patchCommonSize = 0x4a;
 var patchCommonProperties = [
@@ -193,6 +211,14 @@ var PatchTone = function(data) {
 }
 PatchTone.prototype = Object.create(SysexData.prototype);
 PatchTone.prototype.constructor = PatchTone;
+
+PatchTone.prototype.getSysexData = function(patchNumber, toneNumber) {
+   var header = [0xf0,0x41,0x10,0x6a,0x12];
+   var address = [0x11, patchNumber, 0x10 + 2*toneNumber, 0x00];
+   var checksum = midiUtil.getChecksum(buildUint8Array(address, this.data));
+   var sysex = buildUint8Array(header, address, this.data, checksum, 0xf7);
+   return sysex;
+}
 
 const patchToneSize = 0x81;
 var patchToneProperties = [

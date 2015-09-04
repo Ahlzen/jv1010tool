@@ -57,7 +57,6 @@ function initializeMidiUI() {
 }
 
 function initializeDragAndDrop() {
-	// TEST CODE
 	window.fd.logging = false;
 	var options = {iframe: {url: 'upload.php'}};
 	var zone = new FileDrop('zbasic', options);
@@ -143,6 +142,11 @@ function addOption(selector, val, txt) {
 	$(selector).append($('<option>', {value: val, text: txt || val}));
 }
 
+function saveDataAs(data, filename) {
+	var blob = new Blob([data], {type: "application/octet-binary"});
+	saveAs(blob, filename);
+}
+
 
 // Event handlers
 
@@ -174,7 +178,11 @@ function onSendUserPatchRequest() {
 	var patchNumberStr = $("#patchNumber").val();
 	var patchNumber = parseInt(patchNumberStr) - 1;
 	sysex.sendUserPatchRequest(
-		(eventName, patch) => alert("Sysex success: PatchName = " + patch.common.PatchName),
+		(eventName, patch) => {
+			var sysex = patch.getSysexData();
+			console.log('Patch data: [' + toHexStrings(sysex) + ']');
+			saveDataAs(sysex, patch.common.PatchName + ".syx");
+		},
 		(eventName) => alert("Sysex fail: " + eventName),
 		patchNumber);
 }

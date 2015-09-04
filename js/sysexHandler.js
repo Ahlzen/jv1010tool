@@ -140,25 +140,25 @@ SysexHandler.prototype.processDataRequest = function(bytes) {
 
 		switch (address[2]) {
 			case 0x00: // Patch Common
-				this.requestData.patchNumber = address[1];
 				this.requestData.patch = new Patch();
+				this.requestData.patch.number = address[1];
 				this.requestData.patch.common = new PatchCommon(data);
 				this.sendDataRequest(this.requestData.baseAddress + 0x1000, patchToneSize); // request tone 1
 				break;
 			case 0x10: // Tone 1
-				this.requestData.patch.tones[0].data = new PatchTone(data);
+				this.requestData.patch.tones[0].copyDataFrom(data,0);
 				this.sendDataRequest(this.requestData.baseAddress + 0x1200, patchToneSize); // request tone 2
 				break;
 			case 0x12: // Tone 2
-				this.requestData.patch.tones[1].data = new PatchTone(data);
+				this.requestData.patch.tones[1].copyDataFrom(data,0);
 				this.sendDataRequest(this.requestData.baseAddress + 0x1400, patchToneSize); // request tone 3
 				break;
 			case 0x14: // Tone 3
-				this.requestData.patch.tones[2].data = new PatchTone(data);
+				this.requestData.patch.tones[2].copyDataFrom(data,0);
 				this.sendDataRequest(this.requestData.baseAddress + 0x1600, patchToneSize); // request tone 4
 				break;
 			case 0x16: // Tone 4
-				this.requestData.patch.tones[3].data = new PatchTone(data);
+				this.requestData.patch.tones[3].copyDataFrom(data,0);
 				this.success("UserPatchRequest", this.requestData.patch); // we're done!
 				break;
 			default:
