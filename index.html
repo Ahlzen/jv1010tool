@@ -2,8 +2,8 @@
 <html>
 
 <head>
-<meta charset="UTF-8">
-	<title>JV-1010 Editor</title>
+	<meta charset="UTF-8">
+	<title>JV-1010 Tool</title>
 	<link rel="stylesheet" type="text/css" href="style.css">
 	<script src="js/jQuery-2.1.4.min.js"></script>
 	<script src="https://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
@@ -24,7 +24,6 @@
 </head>
 
 <body>
-<!-- <form action="#"> -->
 
 <div id="toolbar" class="panel">
     <label for="midiIn">JV-1010 In:</label>
@@ -78,26 +77,26 @@
 </div>
 
 <fieldset id="getData">
-<legend>Get Data</legend>
-<button type="button" onclick="onSendUserPatchRequest();">Get User Patch</button>
-#<input id="patchNumber" type="number" value="1"></input>
+	<legend>Get Data</legend>
+	<button type="button" onclick="onSendUserPatchRequest();">Get User Patch</button>
+	#<input id="patchNumber" type="number" value="1"></input>
+	<br>
+	<button type="button" onclick="onSendAllUserPatchRequest();">Get All User Patches</button>
 </fieldset>
 
 <fieldset id="sendData">
-<legend>Send Data</legend>
-<div id="zbasic" style="border: 1px solid;">
-  <p>Drop .syx file here or click to browse</p>
-</div>
-<pre id="fileContents">
-</pre>
+	<legend>Send Data</legend>
+	<div id="zbasic" style="border: 1px solid;">
+	  <p>Drop .syx file here or click to browse</p>
+	</div>
+	<pre id="fileContents">
+	</pre>
 </fieldset>
 
 <fieldset id="miscSysex">
-<legend>Misc SysEx</legend>
-<button type="button" onclick="onSendIdentityRequest();">Identity Request</button>
+	<legend>Misc SysEx</legend>
+	<button type="button" onclick="onSendIdentityRequest();">Identity Request</button>
 </fieldset>
 
-
-<!-- </form> -->
 </body>
 </html>

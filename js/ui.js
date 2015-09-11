@@ -178,13 +178,24 @@ function onSendUserPatchRequest() {
 	var patchNumberStr = $("#patchNumber").val();
 	var patchNumber = parseInt(patchNumberStr) - 1;
 	sysex.sendUserPatchRequest(
-		(eventName, patch) => {
-			var sysex = patch.getSysexData();
+		(eventName, patches) => {
+			var sysex = patches[0].getSysexData();
 			console.log('Patch data: [' + toHexStrings(sysex) + ']');
-			saveDataAs(sysex, patch.common.PatchName + ".syx");
+			saveDataAs(sysex, patches[0].common.PatchName + ".syx");
 		},
 		(eventName) => alert("Sysex fail: " + eventName),
 		patchNumber);
+}
+
+function onSendAllUserPatchRequest() {
+	sysex.sendAllUserPatchRequest(
+		(eventName, patches) => {
+			var sysex = buildUint8Array.apply(this, patches.map(p => p.getSysexData()));
+			console.log('All patch data: [' + toHexStrings(sysex) + ']');
+			saveDataAs(sysex, "User Patches.syx");
+		},
+		(eventName) => alert("Sysex fail: " + eventName),
+		patchNumber);	
 }
 
 function onDroppedData(data) {
