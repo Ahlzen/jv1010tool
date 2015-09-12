@@ -201,11 +201,11 @@ function onSendAllUserPatchRequest() {
 function onDroppedData(data) {
 	var bytes = new Uint8Array(data); // data is ArrayBuffer
 	var parser = new SysexParser();
-	parser.parse(bytes);
+	parser.parseData(bytes);
 	var message = "Contents:\n";
-	parser.errors.map(e =>
+	parser.errors.forEach(e =>
 		message += "Error: " + e + "\n");
-	parser.objects.map(o =>
-		message += "Patch " + o.number + ": " + o.common.PatchName + "\n");
+	parser.objects.forEach(o =>
+		message += "Patch " + (o.number+1) + ": " + o.common.PatchName + "\n");
 	$("#fileContents").html(message);
 }

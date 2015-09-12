@@ -5,13 +5,12 @@ var SysexHandler = function(midi) {
 
 	// For keeping track of our current request
 	this.requestType = null;
-	this.requestData = null;
 	this.timeoutID = null;
+	this.sysexParser = null;
 
 	// Queue of [address,size] data requests
 	this.dataRequestQueue = [];
 	
-
 	// Success callback
 	//  eventName: "IdentityReply", data: -
 	//  eventName: "UserPatchRequest", data: [Patch]
@@ -24,6 +23,7 @@ var SysexHandler = function(midi) {
 	//  eventName: "UnexpectedAddress"
 	//  eventName: "InvalidChecksum"
 	//  eventName: "Unsupported"
+	//  eventName: "UnknownError"
 	this.onFail = null;
 
 	// Handle this MIDI's sysex data:
@@ -53,19 +53,14 @@ SysexHandler.prototype.sendAllUserPatchRequest = function(onSuccess, onFail) {
 
 // Internal: Event handlers
 
-SysexHandler.prototype.onData = function(data) {
-	// Identity Reply message
-	if (midiUtil.startsWith(data, [0xf0, 0x7e, 0x10, 0x06, 0x02, 0x41, 0x6A, 0x00, 0x05])) {
-		this.success("IdentityReply", null);
-	}
-
-	// Data Set message
-	else if (midiUtil.startsWith(data, [0xf0, 0x41, 0x10, 0x6a, 0x12])) {
-		this.processDataRequest(data);
-	}
-
-	// Something else that we don't support...
-	else this.fail("Unsupported");
+SysexHandler.prototype.onData = function(data)
+{
+	if (this.sysexParser.parseMessage(Array.from(data))) {
+		// Send next request (if applicable)
+		this.processDataRequestQueue();
+	} else {
+		this.fail(_.last(this.sysexParser.errors) || "UnknownError");
+	}	
 }
 
 SysexHandler.prototype.onTimeout = function() {
@@ -91,20 +86,21 @@ SysexHandler.prototype.processDataRequestQueue = function() {
 	if (this.dataRequestQueue.length > 0)
 	{
 		var req = this.dataRequestQueue.shift();
-		var address = req[0];
-		var size = req[1];
+
+		// Create data request sysex message
+		var address = midiUtil.addressToBytes(req[0]);
+		var size = midiUtil.sizeToBytes(req[1]);
 		var command = [0x41, 0x10, 0x6a, 0x11];
-		var address = midiUtil.addressToBytes(address);
-		size = midiUtil.sizeToBytes(size);
 		var data = address.concat(size);
 		var checksum = midiUtil.getChecksum(data);
 		var bytes = [].concat(0xf0, command, data, checksum, 0xf7);
+
 		this.m.sendMessage(bytes);
 	}
 	else
 	{
 		// Empty queue. We're done!
-		this.success(this.requestType, this.requestData);
+		this.success(this.requestType, this.sysexParser.objects);
 	}
 }
 
@@ -113,7 +109,7 @@ SysexHandler.prototype.processDataRequestQueue = function() {
 
 SysexHandler.prototype.initRequest = function(requestType, onSuccess, onFail, timeout) {
 	this.requestType = requestType;
-	this.requestData = [];
+	this.sysexParser = new SysexParser();
 	this.onSuccess = onSuccess;
 	this.onFail = onFail;
 	this.timeoutId = window.setTimeout(this.onTimeout.bind(this), timeout);
@@ -125,7 +121,7 @@ SysexHandler.prototype.clearRequest = function() {
 		this.timeoutId = null;
 	}
 	this.requestType = null;
-	this.requestData = null;
+	this.sysexParser = null;
 }
 
 SysexHandler.prototype.success = function(eventName, data) {
@@ -144,58 +140,4 @@ SysexHandler.prototype.fail = function(eventName) {
 	}
 	this.onSuccess = null;
 	this.onFail = null;
-}
-
-
-SysexHandler.prototype.processDataRequest = function(bytes) {
-	console.assert(bytes.length >= 15);
-	var address = bytes.slice(5, 9);
-	var data = bytes.slice(9, bytes.length-2);
-	var dataAndAddress = bytes.slice(5, bytes.length-2);
-	var checksum = bytes[bytes.length-2];
-	var eox = bytes[bytes.length-1];
-
-	// This assumes a User Patch Request.
-	// TODO: Handle other data dumps
-
-	// Sanity checks
-	if (address[0] !== 0x11 || address[1] >= 0x80) { // User patches at 0x11000000 - 0x11800000
-		this.fail("UnexpectedAddress");
-		return;
-	}
-	if (eox !== 0xf7) {
-		this.fail("UnexpectedResponse");
-		return;
-	}
-	if (checksum !== midiUtil.getChecksum(dataAndAddress)) {
-		this.fail("InvalidChecksum");
-		return;
-	}
-
-	var patchNumber = address[1];
-
-	switch (address[2]) {
-		case 0x00: // Patch Common
-			var patch = new Patch();
-			patch.number = patchNumber;
-			patch.common = new PatchCommon(data);
-			this.requestData.push(patch);
-			break;
-		case 0x10: // Patch Tone 1
-		case 0x12: // Patch Tone 2
-		case 0x14: // Patch Tone 3
-		case 0x16: // Patch Tone 4
-			var toneNumber = (address[2] & 0x0f) >> 1;
-			console.assert(toneNumber >= 0);
-			console.assert(toneNumber <= 3);
-			var patch = this.requestData[this.requestData.length-1]
-			patch.tones[toneNumber].copyDataFrom(data,0);
-			break;
-		default:
-			this.fail("UnexpectedAddress");
-			return;		
-	}
-
-	// Send next request (if applicable)
-	this.processDataRequestQueue();
 }
