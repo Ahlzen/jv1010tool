@@ -100,17 +100,6 @@ Midi.prototype.useControllerIn = function(portName) {
 	}	
 }
 
-// Midi.prototype.setMidiEcho = function(enabled) {
-// 	if (enabled) {
-// 		console.log("MIDI echo on");
-// 		this.midiEcho = true;
-// 	} else {
-// 		console.log("MIDI echo off");
-// 		this.sendAllNotesOff(); // To avoid stuck notes
-// 		this.midiEcho = false;
-// 	}
-// }
-
 
 // MIDI out
 

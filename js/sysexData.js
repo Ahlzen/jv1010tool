@@ -99,6 +99,8 @@ function addStringAccessor(obj, offset, length, name) {
 
 ////// PATCH //////
 
+const TEMPORARY_PATCH = -1; // patch mode temporary patch
+
 var Patch = function() {
    this.number = 0;
    this.common = new PatchCommon();
@@ -107,6 +109,14 @@ var Patch = function() {
       new PatchTone(),
       new PatchTone(),
       new PatchTone()];
+}
+
+Patch.getBaseAddress = function(patchNumber) {
+   if (patchNumber === TEMPORARY_PATCH) {
+      return [0x03, 0x00, 0x00, 0x00];
+   } else {
+      return [0x11, patchNumber, 0x00, 0x00];
+   }
 }
 
 Patch.prototype.getSysexData = function() {
@@ -119,24 +129,38 @@ Patch.prototype.getSysexData = function() {
    return sysex;
 }
 
+// Creates a deep copy of the patch
+Patch.prototype.clone = function() {
+   var patch = new Patch();
+   patch.number = this.number;
+   patch.common.copyDataFrom(this.common.data, 0);
+   patch.tones.forEach((tone, i) => tone.copyDataFrom(this.tones[i].data, 0));
+   return patch;
+}
+
 
 ////// PATCH COMMON //////
 
+const PATCH_COMMON_SIZE = 0x4a;
+
 var PatchCommon = function(data) {   
-   SysexData.call(this, patchCommonSize, data);
+   SysexData.call(this, PATCH_COMMON_SIZE, data);
 }
 PatchCommon.prototype = Object.create(SysexData.prototype);
 PatchCommon.prototype.constructor = PatchCommon;
 
+PatchCommon.getBaseAddress = function(patchNumber) {
+   return Patch.getBaseAddress(patchNumber);
+}
+
 PatchCommon.prototype.getSysexData = function(patchNumber) {
    var header = [0xf0,0x41,0x10,0x6a,0x12];
-   var address = [0x11,patchNumber,0x00,0x00];
+   var address = PatchCommon.getBaseAddress(patchNumber);
    var checksum = midiUtil.getChecksum(buildUint8Array(address, this.data));
    var sysex = buildUint8Array(header, address, this.data, checksum, 0xf7);
    return sysex;
 }
 
-const patchCommonSize = 0x4a;
 var patchCommonProperties = [
    [PropertyType.String, 0x00, 12, "PatchName"],
    [PropertyType.Int, 0x0c, 0, 39, "EFXType"],
@@ -206,21 +230,28 @@ patchCommonProperties.map(
 
 ////// PATCH TONE //////
 
+const PATCH_TONE_SIZE = 0x81;
+
 var PatchTone = function(data) {
-   SysexData.call(this, patchToneSize, data);
+   SysexData.call(this, PATCH_TONE_SIZE, data);
 }
 PatchTone.prototype = Object.create(SysexData.prototype);
 PatchTone.prototype.constructor = PatchTone;
 
+PatchTone.getBaseAddress = function(patchNumber, toneNumber) {
+   var a = Patch.getBaseAddress(patchNumber);
+   a[2] = 0x10 + 2*toneNumber;
+   return a;
+}
+
 PatchTone.prototype.getSysexData = function(patchNumber, toneNumber) {
    var header = [0xf0,0x41,0x10,0x6a,0x12];
-   var address = [0x11, patchNumber, 0x10 + 2*toneNumber, 0x00];
+   var address = PatchTone.getBaseAddress(patchNumber, toneNumber);
    var checksum = midiUtil.getChecksum(buildUint8Array(address, this.data));
    var sysex = buildUint8Array(header, address, this.data, checksum, 0xf7);
    return sysex;
 }
 
-const patchToneSize = 0x81;
 var patchToneProperties = [
    [PropertyType.Int, 0x00, 0, 1, "ToneSwitch"],
    [PropertyType.Int, 0x01, 0, 2, "WaveGroupType"],

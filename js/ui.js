@@ -2,6 +2,7 @@
 
 var midi = new Midi();
 var sysex = new SysexHandler(midi);
+var loadedPatches = null;
 
 function showError(message) {
 	console.log("ERROR: " + message);
@@ -202,10 +203,21 @@ function onDroppedData(data) {
 	var bytes = new Uint8Array(data); // data is ArrayBuffer
 	var parser = new SysexParser();
 	parser.parseData(bytes);
-	var message = "Contents:\n";
-	parser.errors.forEach(e =>
-		message += "Error: " + e + "\n");
-	parser.objects.forEach(o =>
-		message += "Patch " + (o.number+1) + ": " + o.common.PatchName + "\n");
+	if (parser.errors.length > 0) {
+		var message = parser.errors.reduce((p,c) => p + "<br>Error: " + c, "");
+		loadedPatches = null;
+	} else {
+		var message = parser.objects.reduce((p,c,i) =>
+			p + "<br>Patch: " + c.number + " " + c.common.PatchName +
+			" <a href=\"#\" onClick=\"onSendLoadedPatch(" + i + ");\">try</a>", "")
+		loadedPatches = parser.objects;
+	}
 	$("#fileContents").html(message);
+}
+
+function onSendLoadedPatch(index) {
+	var patch = loadedPatches[index].clone();
+	patch.number = TEMPORARY_PATCH;
+	var sysex = patch.getSysexData();
+	midi.sendMessage(sysex);
 }

@@ -8,7 +8,7 @@ var SysexHandler = function(midi) {
 	this.timeoutID = null;
 	this.sysexParser = null;
 
-	// Queue of [address,size] data requests
+	// Queue of [[addressBytes],size] data requests
 	this.dataRequestQueue = [];
 	
 	// Success callback
@@ -73,12 +73,11 @@ SysexHandler.prototype.onTimeout = function() {
 // Internal: Data request queue
 
 SysexHandler.prototype.pushPatchRequest = function(patchNumber) {
-	var baseAddress = 0x11000000+0x10000*patchNumber;
-	this.dataRequestQueue.push([baseAddress, patchCommonSize]);
-	this.dataRequestQueue.push([baseAddress+0x1000, patchToneSize]);
-	this.dataRequestQueue.push([baseAddress+0x1200, patchToneSize]);
-	this.dataRequestQueue.push([baseAddress+0x1400, patchToneSize]);
-	this.dataRequestQueue.push([baseAddress+0x1600, patchToneSize]);
+	this.dataRequestQueue.push([PatchCommon.getBaseAddress(patchNumber), PATCH_COMMON_SIZE]);
+	this.dataRequestQueue.push([PatchTone.getBaseAddress(patchNumber, 0), PATCH_TONE_SIZE]);
+	this.dataRequestQueue.push([PatchTone.getBaseAddress(patchNumber, 1), PATCH_TONE_SIZE]);
+	this.dataRequestQueue.push([PatchTone.getBaseAddress(patchNumber, 2), PATCH_TONE_SIZE]);
+	this.dataRequestQueue.push([PatchTone.getBaseAddress(patchNumber, 3), PATCH_TONE_SIZE]);
 }
 
 // Process next entry in the data request queue
@@ -88,7 +87,7 @@ SysexHandler.prototype.processDataRequestQueue = function() {
 		var req = this.dataRequestQueue.shift();
 
 		// Create data request sysex message
-		var address = midiUtil.addressToBytes(req[0]);
+		var address = req[0];
 		var size = midiUtil.sizeToBytes(req[1]);
 		var command = [0x41, 0x10, 0x6a, 0x11];
 		var data = address.concat(size);
