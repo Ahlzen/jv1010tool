@@ -98,5 +98,27 @@
 	<button type="button" onclick="onSendIdentityRequest();">Identity Request</button>
 </fieldset>
 
+</div>
+
+<div class="dialogBackdrop" id="sendPatchDialog" style="display: none;">
+	<div class="dialogBox">
+		<div class="closeButton"><a href="#" onClick="$('#sendPatchDialog').hide();">X</a></div>
+		<h2>Send Patch "<span id="sendPatchName">PatchName</span>"</h2>
+		<input type="hidden" id="sendPatchIndex"/>
+		<p>
+			<button type="button" onClick="onSendLoadedPatchToTemporary(parseInt($('#sendPatchIndex')));$('#sendPatchDialog').hide();">
+				Upload to Temporary Patch
+			</button>
+		</p>
+		<p>
+			<button type="button" onClick="onSendLoadedPatchToUser(parseInt($('#sendPatchIndex').val()), parseInt($('#sendPatchNumber').val())-1);
+			$('#sendPatchDialog').hide();">
+				Upload to User Patch
+			</button>
+			# <input id="sendPatchNumber" type="number" style="width: 50px;"></input>
+		</p>
+	</div>
+</div>
+
 </body>
 </html>

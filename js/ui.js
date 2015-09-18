@@ -208,16 +208,30 @@ function onDroppedData(data) {
 		loadedPatches = null;
 	} else {
 		var message = parser.objects.reduce((p,c,i) =>
-			p + "<br>Patch: " + c.number + " " + c.common.PatchName +
-			" <a href=\"#\" onClick=\"onSendLoadedPatch(" + i + ");\">try</a>", "")
+			p + "<br><a class='action try' href=\"#\" onClick=\"onSendLoadedPatchToTemporary(" + i + ");\">try</a>" +
+			" <a class='action upload' href=\"#\" onClick=\"onShowSendPatchDialog(" + i + ");\">send</a>" +
+			" Patch: " + (c.number+1) + " " + c.common.PatchName, "")
 		loadedPatches = parser.objects;
 	}
 	$("#fileContents").html(message);
 }
 
-function onSendLoadedPatch(index) {
+function onSendLoadedPatchToTemporary(index) {
+	onSendLoadedPatchToUser(index, TEMPORARY_PATCH);
+}
+
+function onShowSendPatchDialog(index) {
 	var patch = loadedPatches[index].clone();
-	patch.number = TEMPORARY_PATCH;
+	$('#sendPatchDialog #sendPatchIndex').val(index);
+	$('#sendPatchDialog #sendPatchNumber').val(patch.number+1);
+	$('#sendPatchDialog #sendPatchName').html(patch.common.PatchName);
+	$('#sendPatchDialog').show();
+}
+
+function onSendLoadedPatchToUser(index, userPatchNumber) {
+	// TODO: Range checks
+	var patch = loadedPatches[index].clone();
+	patch.number = userPatchNumber;
 	var sysex = patch.getSysexData();
 	midi.sendMessage(sysex);
 }
