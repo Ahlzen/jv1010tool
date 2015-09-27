@@ -108,13 +108,25 @@ function buildUint8Array()
 
 
 // Utility/debug
-
-function toHexStrings(data) {
-	//return data.map(function(d){return d.toString(16);});
-	// Ugly, but works with both Uint8Array and Array:
-	var arr = [];
-	for (var i = 0; i < data.length; i++) {
-		arr.push(data[i].toString(16));
-	}
-	return arr;
+jvtool.util = {
+	toHexStrings: function(data) {
+		//return data.map(function(d){return d.toString(16);});
+		// Ugly, but works with both Uint8Array and Array:
+		var arr = [];
+		for (var i = 0; i < data.length; i++) {
+			arr.push(data[i].toString(16));
+		}
+		return arr;
+	}	
 }
+
+// // OBSOLETE: use jvtool.util.toHexStrings
+// function toHexStrings(data) {
+// 	//return data.map(function(d){return d.toString(16);});
+// 	// Ugly, but works with both Uint8Array and Array:
+// 	var arr = [];
+// 	for (var i = 0; i < data.length; i++) {
+// 		arr.push(data[i].toString(16));
+// 	}
+// 	return arr;
+// }	

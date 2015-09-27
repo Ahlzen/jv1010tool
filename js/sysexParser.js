@@ -37,12 +37,12 @@ SysexParser.prototype.parseMessage = function(message) {
 		return false;
 	}
 
-	if (midiUtil.startsWith(message, [0x7e, 0x10, 0x06, 0x02, 0x41, 0x6A, 0x00, 0x05]))
+	if (jvtool.midiUtil.startsWith(message, [0x7e, 0x10, 0x06, 0x02, 0x41, 0x6A, 0x00, 0x05]))
 	{
 		this.objects.push("IdentityReply");
 		return true;
 	}
-	else if (midiUtil.startsWith(message, [0x41, 0x10, 0x6a, 0x12]))
+	else if (jvtool.midiUtil.startsWith(message, [0x41, 0x10, 0x6a, 0x12]))
 	{
 		// Data Set message
 		message.splice(0, 4); // remove command

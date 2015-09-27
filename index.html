@@ -4,22 +4,40 @@
 <head>
 	<meta charset="UTF-8">
 	<title>JV-1010 Tool</title>
+
 	<link rel="stylesheet" type="text/css" href="style.css">
-	<script src="js/jQuery-2.1.4.min.js"></script>
+
+	<script src="js/3rdParty/jQuery-2.1.4.min.js"></script>
 	<script src="https://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
-	<script src="js/WebMIDIAPIShim/WebMIDIAPI.js"></script>
-	<script src="js/underscore-1.8.3.min.js"></script>
-	<script src="js/filedrop-min.js"></script>
-	<script src="js/FileSaver.min.js"></script>
+	<script src="js/3rdParty/WebMIDIAPI.js"></script>
+	<script src="js/3rdParty/underscore-1.8.3.min.js"></script>
+	<script src="js/3rdParty/filedrop-min.js"></script>
+	<script src="js/3rdParty/FileSaver.min.js"></script>
+
+	<script type="text/javascript">
+		var jvtool = {};
+	</script>
+
+
 	<script src="js/util.js"></script>
+	<script src="js/midiUtil.js"></script>
 	<script src="js/midi.js"></script>
 	<script src="js/sysexData.js"></script>
 	<script src="js/sysexParser.js"></script>
-	<script src="js/sysexHandler.js"></script>
+	<script src="js/sysexHandler.js"></script>	
 	<script src="js/patchList.js"></script>
-	<script src="js/ui.js"></script>
+	<script src="js/jv1010tool.js"></script>
+
 	<script type="text/javascript">
 		$(document).ready(initializeApp);
+		// $(document).ready(() => {
+		// 	jvtool.midi.initialize(
+		// 		() => {
+		// 			console.log('MIDI init successful.')
+		// 			jvtool.midi.listPorts();
+		// 		},
+		// 		() => console.log('MIDI init failed.'));
+		// });
 	</script>
 </head>
 

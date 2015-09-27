@@ -1,7 +1,7 @@
 'use strict';
 
-var midi = new Midi();
-var sysex = new SysexHandler(midi);
+//var midi = new Midi();
+//var sysex = new SysexHandler(midi);
 var loadedPatches = null;
 
 function showError(message) {
@@ -13,7 +13,7 @@ function showError(message) {
 // Initialization
 
 function initializeApp() {
-	midi.initialize(onMidiAvailable, onNoMidi);
+	jvtool.midi.initialize(onMidiAvailable, onNoMidi);
 	initializeDragAndDrop();
 }
 
@@ -33,17 +33,17 @@ function initializeMidiUI() {
 	// MIDI port selectors
 
 	//$('#midiIn').selectmenu();
-	addOption('#midiIn', midi.NoMidiPortValue);
-	midi.getInNames().forEach(name => addOption('#midiIn', name));
+	addOption('#midiIn', NoMidiPortValue);
+	jvtool.midi.getInNames().forEach(name => addOption('#midiIn', name));
 	$('#midiIn').change(onMidiInChange);
 
 	//$('#midiOut').selectmenu();
-	addOption('#midiOut', midi.NoMidiPortValue);
-	midi.getOutNames().forEach(name => addOption('#midiOut', name));
+	addOption('#midiOut', NoMidiPortValue);
+	jvtool.midi.getOutNames().forEach(name => addOption('#midiOut', name));
 	$('#midiOut').change(onMidiOutChange);
 
-	addOption('#controllerIn', midi.NoMidiPortValue);
-	midi.getInNames().forEach(name => addOption('#controllerIn', name));
+	addOption('#controllerIn', jvtool.midi.NoMidiPortValue);
+	jvtool.midi.getInNames().forEach(name => addOption('#controllerIn', name));
 	$('#controllerIn').change(onControllerInChange);	
 
 	// Patch list
@@ -92,19 +92,19 @@ function readPrefs() {
 	var midiInVal = getPrefs('midiIn');
 	if (midiInVal) {
 		$('#midiIn').val(midiInVal);
-		midi.useMidiIn(midiInVal);
+		jvtool.midi.useMidiIn(midiInVal);
 	}
 
 	var midiOutVal = getPrefs('midiOut');
 	if (midiOutVal) {
 		$('#midiOut').val(midiOutVal);
-		midi.useMidiOut(midiOutVal);	
+		jvtool.midi.useMidiOut(midiOutVal);	
 	}
 
 	var controllerInVal = getPrefs('controllerIn');
 	if (controllerInVal) {
 		$('#controllerIn').val(controllerInVal);
-		midi.useControllerIn(controllerInVal);
+		jvtool.midi.useControllerIn(controllerInVal);
 	}
 }
 
@@ -170,7 +170,7 @@ function onControllerInChange() {
 }
 
 function onSendIdentityRequest() {
-	sysex.sendIdentityRequest(
+	jvtool.sysexHandler.sendIdentityRequest(
 		(eventName, data) => alert("Sysex success: " + eventName),
 		(eventName) => alert("Sysex fail: " + eventName));
 }
@@ -178,7 +178,7 @@ function onSendIdentityRequest() {
 function onSendUserPatchRequest() {
 	var patchNumberStr = $("#patchNumber").val();
 	var patchNumber = parseInt(patchNumberStr) - 1;
-	sysex.sendUserPatchRequest(
+	jvtool.sysexHandler.sendUserPatchRequest(
 		(eventName, patches) => {
 			var sysex = patches[0].getSysexData();
 			console.log('Patch data: [' + toHexStrings(sysex) + ']');
@@ -189,7 +189,7 @@ function onSendUserPatchRequest() {
 }
 
 function onSendAllUserPatchRequest() {
-	sysex.sendAllUserPatchRequest(
+	jvtool.sysexHandler.sendAllUserPatchRequest(
 		(eventName, patches) => {
 			var sysex = buildUint8Array.apply(this, patches.map(p => p.getSysexData()));
 			console.log('All patch data: [' + toHexStrings(sysex) + ']');

@@ -47,9 +47,9 @@ SysexData.prototype.cleanAscii = function(i) {
 
 
 var PropertyType = Object.freeze({
-   "Int": 1, // simple integer value (0-127)
+   "Int": 1,      // simple integer value (0-127)
    "LargeInt": 2, // byte value split into two nibbles (0-255)
-   "String": 3 // ASCII string
+   "String": 3    // ASCII string
 });
 
 function addProperty(obj, data) {
