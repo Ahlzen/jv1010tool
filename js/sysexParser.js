@@ -51,7 +51,7 @@ SysexParser.prototype.parseMessage = function(message) {
 		var data = message.slice(4);
 
 		// Verify checksum
-		if (checksum !== midiUtil.getChecksum(message)) {
+		if (checksum !== jvtool.midiUtil.getChecksum(message)) {
 			this.errors.push("InvalidChecksum");
 			return false;
 		}

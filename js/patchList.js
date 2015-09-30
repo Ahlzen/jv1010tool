@@ -1,9 +1,7 @@
 // JV-1010 default patch list
 // http://www.levente-zone.co.uk/Synths/JV1010_Ref_Manual/patch_list.htm
 
-
-
-var UserPatches = [
+jvtool.userPatches = [
 	{number: '001', name: 'Tremendously', voices: 4, poly: true},
 	{number: '002', name: 'St.Concert', voices: 4, poly: true},
 	{number: '003', name: 'CyberTrance2', voices: 4, poly: true},
@@ -134,7 +132,7 @@ var UserPatches = [
 	{number: '128', name: 'Crowds', voices: 4, poly: true}
 ];
 
-var PresetAPatches = [
+jvtool.presetAPatches = [
 	{number: '001', name: '64voicePiano', voices: 1, poly: true},
 	{number: '002', name: 'Bright Piano', voices: 1, poly: true},
 	{number: '003', name: 'Classique', voices: 2, poly: true},
@@ -265,7 +263,7 @@ var PresetAPatches = [
 	{number: '128', name: 'RockYurSocks', voices: 4, poly: false}
 ];
 
-var PresetBPatches = [
+jvtool.presetBPatches = [
 	{number: '001', name: 'Dist Gtr 1', voices: 3, poly: true},
 	{number: '002', name: 'Dist Gtr 2', voices: 3, poly: true},
 	{number: '003', name: 'R&R Chunk', voices: 4, poly: true},
@@ -396,7 +394,7 @@ var PresetBPatches = [
 	{number: '128', name: 'Mute TP mod ', voices: 4, poly: true}
 ];
 
-var PresetCPatches = [
+jvtool.presetCPatches = [
 	{number: '001', name: 'Harmon Mute', voices: 1, poly: true},
 	{number: '002', name: 'Tp&Sax Sect', voices: 4, poly: true},
 	{number: '003', name: 'Sax+Tp+Tb', voices: 3, poly: true},
@@ -527,7 +525,7 @@ var PresetCPatches = [
 	{number: '128', name: 'Terminate', voices: 3, poly: true}
 ];
 
-var PresetDPatches = [
+jvtool.presetDPatches = [
 	{number: '001', name: 'Piano 1', voices: 2, poly: true},
 	{number: '002', name: 'Piano 2', voices: 2, poly: true},
 	{number: '003', name: 'Piano 3', voices: 2, poly: true},
@@ -658,7 +656,7 @@ var PresetDPatches = [
 	{number: '128', name: 'Gun Shot', voices: 2, poly: true}
 ];
 
-var PresetEPatches = [
+jvtool.presetEPatches = [
 	{number: '001', name: 'Echo Piano', voices: 3, poly: true},
 	{number: '002', name: 'Upright Pno ', voices: 3, poly: true},
 	{number: '003', name: 'RD-1000', voices: 3, poly: true},
@@ -789,7 +787,7 @@ var PresetEPatches = [
 	{number: '128', name: 'Rain Forest ', voices: 4, poly: true}
 ];
 
-var SessionPatches = [
+jvtool.sessionPatches = [
 	{number: '001', name: 'St.Concert', voices: 4},
 	{number: '002', name: '9ft.Grand 1', voices: 4},
 	{number: '003', name: '9ft.Grand 2', voices: 4},
@@ -1047,12 +1045,12 @@ var SessionPatches = [
 	{number: '255', name: 'DEMO Crowd', voices: 4}
 ];
 
-var Banks = {
-	"User":          {msb: 80, lsb: 0, patches: UserPatches},
-	"Preset A":      {msb: 81, lsb: 0, patches: PresetAPatches},
-	"Preset B":      {msb: 81, lsb: 1, patches: PresetBPatches},
-	"Preset C":      {msb: 81, lsb: 2, patches: PresetCPatches},
-	"Preset D (GM)": {msb: 81, lsb: 3, patches: PresetDPatches},
-	"Preset E":      {msb: 81, lsb: 4, patches: PresetEPatches},
-	"Session":       {msb: 84, lsb: 0, patches: SessionPatches}
+jvtool.banks = {
+	"User":          {msb: 80, lsb: 0, patches: jvtool.userPatches},
+	"Preset A":      {msb: 81, lsb: 0, patches: jvtool.presetAPatches},
+	"Preset B":      {msb: 81, lsb: 1, patches: jvtool.presetBPatches},
+	"Preset C":      {msb: 81, lsb: 2, patches: jvtool.presetCPatches},
+	"Preset D (GM)": {msb: 81, lsb: 3, patches: jvtool.presetDPatches},
+	"Preset E":      {msb: 81, lsb: 4, patches: jvtool.presetEPatches},
+	"Session":       {msb: 84, lsb: 0, patches: jvtool.sessionPatches}
 };

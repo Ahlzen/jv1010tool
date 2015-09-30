@@ -9,16 +9,14 @@
 
 	<script src="js/3rdParty/jQuery-2.1.4.min.js"></script>
 	<script src="js/3rdParty/jquery-ui-1.11.1.min.js"></script>
-	<script src="js/3rdParty/WebMIDIAPI.js"></script>
 	<script src="js/3rdParty/underscore-1.8.3.min.js"></script>
+	<script src="js/3rdParty/WebMIDIAPI.js"></script>
 	<script src="js/3rdParty/filedrop-min.js"></script>
 	<script src="js/3rdParty/FileSaver.min.js"></script>
 
 	<script type="text/javascript">
 		var jvtool = {};
 	</script>
-
-
 	<script src="js/util.js"></script>
 	<script src="js/midiUtil.js"></script>
 	<script src="js/midi.js"></script>
@@ -27,17 +25,8 @@
 	<script src="js/sysexHandler.js"></script>	
 	<script src="js/patchList.js"></script>
 	<script src="js/jv1010tool.js"></script>
-
 	<script type="text/javascript">
-		$(document).ready(initializeApp);
-		// $(document).ready(() => {
-		// 	jvtool.midi.initialize(
-		// 		() => {
-		// 			console.log('MIDI init successful.')
-		// 			jvtool.midi.listPorts();
-		// 		},
-		// 		() => console.log('MIDI init failed.'));
-		// });
+		$(document).ready(jvtool.app.initialize);
 	</script>
 </head>
 
@@ -96,15 +85,15 @@
 
 <fieldset id="getData">
 	<legend>Get Data</legend>
-	<button type="button" onclick="onSendUserPatchRequest();">Get User Patch</button>
+	<button type="button" onclick="jvtool.app.onSendUserPatchRequest();">Get User Patch</button>
 	#<input id="patchNumber" type="number" value="1"></input>
 	<br>
-	<button type="button" onclick="onSendAllUserPatchRequest();">Get All User Patches</button>
+	<button type="button" onclick="jvtool.app.onSendAllUserPatchRequest();">Get All User Patches</button>
 </fieldset>
 
 <fieldset id="sendData">
 	<legend>Send Data</legend>
-	<div id="zbasic" style="border: 1px solid;">
+	<div id="fileDropZone" style="border: 1px solid;">
 	  <p>Drop .syx file here or click to browse</p>
 	</div>
 	<pre id="fileContents">
@@ -113,7 +102,7 @@
 
 <fieldset id="miscSysex">
 	<legend>Misc SysEx</legend>
-	<button type="button" onclick="onSendIdentityRequest();">Identity Request</button>
+	<button type="button" onclick="jvtool.app.onSendIdentityRequest();">Identity Request</button>
 </fieldset>
 
 </div>
@@ -124,12 +113,12 @@
 		<h2>Send Patch "<span id="sendPatchName">PatchName</span>"</h2>
 		<input type="hidden" id="sendPatchIndex"/>
 		<p>
-			<button type="button" onClick="onSendLoadedPatchToTemporary(parseInt($('#sendPatchIndex')));$('#sendPatchDialog').hide();">
+			<button type="button" onClick="jvtool.app.onSendLoadedPatchToTemporary(parseInt($('#sendPatchIndex')));$('#sendPatchDialog').hide();">
 				Upload to Temporary Patch
 			</button>
 		</p>
 		<p>
-			<button type="button" onClick="onSendLoadedPatchToUser(parseInt($('#sendPatchIndex').val()), parseInt($('#sendPatchNumber').val())-1);
+			<button type="button" onClick="jvtool.app.onSendLoadedPatchToUser(parseInt($('#sendPatchIndex').val()), parseInt($('#sendPatchNumber').val())-1);
 			$('#sendPatchDialog').hide();">
 				Upload to User Patch
 			</button>

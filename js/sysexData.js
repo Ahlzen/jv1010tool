@@ -156,7 +156,7 @@ PatchCommon.getBaseAddress = function(patchNumber) {
 PatchCommon.prototype.getSysexData = function(patchNumber) {
    var header = [0xf0,0x41,0x10,0x6a,0x12];
    var address = PatchCommon.getBaseAddress(patchNumber);
-   var checksum = midiUtil.getChecksum(buildUint8Array(address, this.data));
+   var checksum = jvtool.midiUtil.getChecksum(buildUint8Array(address, this.data));
    var sysex = buildUint8Array(header, address, this.data, checksum, 0xf7);
    return sysex;
 }
@@ -247,7 +247,7 @@ PatchTone.getBaseAddress = function(patchNumber, toneNumber) {
 PatchTone.prototype.getSysexData = function(patchNumber, toneNumber) {
    var header = [0xf0,0x41,0x10,0x6a,0x12];
    var address = PatchTone.getBaseAddress(patchNumber, toneNumber);
-   var checksum = midiUtil.getChecksum(buildUint8Array(address, this.data));
+   var checksum = jvtool.midiUtil.getChecksum(buildUint8Array(address, this.data));
    var sysex = buildUint8Array(header, address, this.data, checksum, 0xf7);
    return sysex;
 }
